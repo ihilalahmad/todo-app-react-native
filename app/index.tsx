@@ -9,10 +9,11 @@ import {
 } from 'react-native-paper';
 import TodoItem from '@/components/TodoItem';
 import Colors from '@/constants/Colors';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddTodoDialog from '@/components/AddTodoDialog';
 import { useAppDispatch, useAppSelector } from '@/hooks/StoreHooks';
 import { useUserTodos } from '@/store/selectors/todos-selector';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Page = () => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -22,6 +23,17 @@ const Page = () => {
   const hideDialog = () => setVisible(false);
 
   const getAllTodos = useAppSelector(useUserTodos);
+
+  useEffect(() => {
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (error, stores) => {
+        stores?.map((result, i, store) => {
+          console.log({ [store[i][0]]: store[i][1] });
+          return true;
+        });
+      });
+    });
+  }, []);
 
   return (
     <>
